@@ -1,5 +1,5 @@
 from setuptools import setup
 
 setup(
-    name='dfk'
+    name='django-dfk'
 )
