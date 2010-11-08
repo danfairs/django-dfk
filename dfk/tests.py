@@ -32,7 +32,7 @@ class ExistingTestCase(TestCase):
         self.assertEqual(c, b.fk)
         
     def test_not_a_model(self):
-        self.assertRaises(ValueError, repoint, ModelB, 'fk', NotAModel)
+        self.assertRaises(AssertionError, repoint, ModelB, 'fk', NotAModel)
 
     def test_abstract(self):
-        self.assertRaises(ValueError, repoint, ModelB, 'fk', AbstractModel)
+        self.assertRaises(AssertionError, repoint, ModelB, 'fk', AbstractModel)
