@@ -4,6 +4,11 @@ from django.db.models.loading import get_models
 from dfk.models import DeferredForeignKey
 
 def point(from_model, rel_name, to_model, **fk_kwargs):
+    """ 
+    Cause the foreign key `rel_name` on `from_model` to point to
+    `to_model`. `fk_kwargs` will be forwarded to the generated
+    foreign key.
+    """
     deferred_fk = getattr(from_model, rel_name)
     if not isinstance(deferred_fk, DeferredForeignKey):
         raise ValueError, u'You only point a DeferredForegnKey'
