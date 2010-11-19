@@ -22,7 +22,7 @@ def point(from_model, rel_name, to_model, **fk_kwargs):
     )
     from_model.add_to_class(rel_name, new_foreign_key)
     
-def point_named(app_name, target_name, to_model):
+def point_named(app_name, target_name, to_model, **fk_kwargs):
     # Grab all the models from the app
     app = get_app(app_name)
     models = get_models(app, include_deferred=True)
@@ -40,7 +40,7 @@ def point_named(app_name, target_name, to_model):
                 continue
                 
             # We found a foreign key. Repoint it.
-            point(model, attr, to_model)
+            point(model, attr, to_model, **fk_kwargs)
 
     
 def repoint(from_model, rel_name, to_model, **kwargs):
