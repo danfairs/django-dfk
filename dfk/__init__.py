@@ -1,3 +1,9 @@
+def point(from_model, rel_name, to_model):
+    pass
+    
+def point_named(name, to_model, app_label):
+    pass
+
 def repoint(from_model, rel_name, to_model, **kwargs):
     options = getattr(to_model, '_meta', None)
     if options:
