@@ -87,3 +87,8 @@ class DeferredForeignKeyTestCase(TestCase):
         # Attempting to point a dfk to a different target once
         # it's already been set should raise an error
         self.assertRaises(ValueError, point, DeferredModelA, 'user', ModelC)
+        
+    def test_point_non_deferred(self):
+        # Attempting to point a non-DeferredForeignKey should raise a 
+        # ValueError
+        self.assertRaises(ValueError, point, ModelB, 'fk', ModelC)

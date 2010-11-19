@@ -1,5 +1,9 @@
+from dfk.models import DeferredForeignKey
+
 def point(from_model, rel_name, to_model):
-    pass
+    deferred_fk = getattr(from_model, rel_name)
+    if not isinstance(deferred_fk, DeferredForeignKey):
+        raise ValueError, u'You only point a DeferredForegnKey'
     
 def point_named(name, to_model, app_label):
     pass
