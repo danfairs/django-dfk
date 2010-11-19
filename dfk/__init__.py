@@ -1,3 +1,4 @@
+from django.db.models import ForeignKey
 from dfk.models import DeferredForeignKey
 
 def point(from_model, rel_name, to_model):
@@ -5,9 +6,17 @@ def point(from_model, rel_name, to_model):
     if not isinstance(deferred_fk, DeferredForeignKey):
         raise ValueError, u'You only point a DeferredForegnKey'
     
-def point_named(name, to_model, app_label):
-    pass
-
+    target_model = '%s.%s' % (
+        to_model._meta.app_label,
+        to_model._meta.object_name
+    )
+    new_foreign_key = ForeignKey(
+        target_model, 
+        *deferred_fk.args, 
+        **deferred_fk.kwargs
+    )
+    from_model.add_to_class(rel_name, new_foreign_key)
+    
 def repoint(from_model, rel_name, to_model, **kwargs):
     options = getattr(to_model, '_meta', None)
     if options:
