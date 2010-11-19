@@ -12,7 +12,7 @@ def point(from_model, rel_name, to_model, **fk_kwargs):
     assert not to_model._meta.abstract
     deferred_fk = getattr(from_model, rel_name)
     if not isinstance(deferred_fk, DeferredForeignKey):
-        raise ValueError, u'You only point a DeferredForegnKey'
+        raise ValueError, u'You only point a DeferredForeignKey'
 
     target_model = '%s.%s' % (
         to_model._meta.app_label,
