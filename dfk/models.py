@@ -1,4 +1,5 @@
 
 class DeferredForeignKey(object):
-    def __init__(self, name=None):
-        self.name = name
+    def __init__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs

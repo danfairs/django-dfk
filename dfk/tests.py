@@ -2,7 +2,6 @@ from django.db import models
 from django.test import TestCase
 
 from dfk import point
-from dfk import point_named
 from dfk import repoint
 from dfk.models import DeferredForeignKey
 
@@ -56,10 +55,6 @@ class DeferredModelC(models.Model):
 
 # Point DeferredModelA's 'user' dfk to ModelA
 point(DeferredModelA, 'user', ModelA)
-
-# Point DeferredForeignKey of class 'content_reference' to ModelB,
-# only in the dfk app
-point_named('content_reference', ModelC, 'dfk')
 
 class DeferredForeignKeyTestCase(TestCase):
 
