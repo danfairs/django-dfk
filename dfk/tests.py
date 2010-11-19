@@ -47,12 +47,6 @@ class ExistingTestCase(TestCase):
 class DeferredModelA(models.Model):
     user = DeferredForeignKey()
 
-class DeferredModelB(models.Model):
-    content = DeferredForeignKey(name='content_reference')
-
-class DeferredModelC(models.Model):
-    content = DeferredForeignKey(name='content_reference')
-
 # Point DeferredModelA's 'user' dfk to ModelA
 point(DeferredModelA, 'user', ModelA)
 
@@ -65,18 +59,8 @@ class DeferredForeignKeyTestCase(TestCase):
         a = DeferredModelA.objects.create(
             user=m
         )
-        x = DeferredModelA.objects.get(pk=a.pk)
+        x = DeferredModelA.objects.get(pk=a.pk).user
         self.assertEqual(m, x)
-
-    def test_class(self):
-        # Check that processing a whole class of deferred fields
-        # works as expected
-        t = ModelC.objects.create()
-        b = DeferredModelB.objects.create(content=t)
-        c = DeferredModelC.objects.create(content=t)
-
-        self.assertEqual(t, DeferredModelB.objects.get(pk=b.pk).content)
-        self.assertEqual(t, DeferredModelC.objects.get(pk=c.pk).content)
 
     def test_duplicate(self):
         # Attempting to point a dfk to a different target once
