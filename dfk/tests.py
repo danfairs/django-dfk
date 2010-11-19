@@ -2,6 +2,7 @@ from django.db import models
 from django.test import TestCase
 
 from dfk import point
+from dfk import point_named
 from dfk import repoint
 from dfk.models import DeferredForeignKey
 
@@ -13,6 +14,9 @@ class ModelB(models.Model):
 
 class ModelC(models.Model):
     pass
+
+class ModelD(models.Model):
+    fk = DeferredForeignKey(name='content')
 
 class NotAModel(object):
     pass
@@ -50,6 +54,9 @@ class DeferredModelA(models.Model):
 # Point DeferredModelA's 'user' dfk to ModelA
 point(DeferredModelA, 'user', ModelA, related_name='foo_set')
 
+# Point ModelD's deferred fk to ModelA
+point_named('dfk', 'content', ModelA)
+
 class DeferredForeignKeyTestCase(TestCase):
 
     def test_specific_field(self):
@@ -75,3 +82,10 @@ class DeferredForeignKeyTestCase(TestCase):
         # Attempting to point a non-DeferredForeignKey should raise a 
         # ValueError
         self.assertRaises(ValueError, point, ModelB, 'fk', ModelC)
+        
+    def test_named_deferred(self):
+        # Check that our repoint of the named foreign key worked
+        a = ModelA.objects.create()
+        d = ModelD.objects.create(fk=a)
+        self.assertEqual(a, ModelD.objects.get(pk=d.pk).fk)
+        

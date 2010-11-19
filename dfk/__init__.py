@@ -1,4 +1,6 @@
 from django.db.models import ForeignKey
+from django.db.models.loading import get_app
+from django.db.models.loading import get_models
 from dfk.models import DeferredForeignKey
 
 def point(from_model, rel_name, to_model, **fk_kwargs):
@@ -19,6 +21,27 @@ def point(from_model, rel_name, to_model, **fk_kwargs):
         **new_kwargs
     )
     from_model.add_to_class(rel_name, new_foreign_key)
+    
+def point_named(app_name, target_name, to_model):
+    # Grab all the models from the app
+    app = get_app(app_name)
+    models = get_models(app, include_deferred=True)
+    
+    # Now look for dfk instances with the target name
+    for model in models:
+        for attr in dir(model):
+            ob = getattr(model, attr)
+            if not isinstance(ob, DeferredForeignKey):
+                continue
+            
+            # We found a deferred foreign key. Check the name
+            # to see if it's the one we're processing.
+            if getattr(ob, 'name', None) != target_name:
+                continue
+                
+            # We found a foreign key. Repoint it.
+            point(model, attr, to_model)
+
     
 def repoint(from_model, rel_name, to_model, **kwargs):
     options = getattr(to_model, '_meta', None)
