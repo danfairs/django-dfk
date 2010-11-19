@@ -14,4 +14,11 @@ setup(
     license='BSD',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
+    classifiers=[
+        "Programming Language :: Python",
+        "Topic :: Software Development :: Libraries :: Python Modules",
+        "Framework :: Django",
+        "Development Status :: 3 - Alpha",
+        "License :: OSI Approved :: BSD License"
+        ],
 )
