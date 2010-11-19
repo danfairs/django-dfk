@@ -24,6 +24,9 @@ repoint(ModelB, 'fk', ModelC)
 class ExistingTestCase(TestCase):
     
     def test_existing_fk(self):
+        # We've repointed ModelB's 'fk' field to reference
+        # ModelC, rather than ModelA. Check this has worked
+        # as expected
         c = ModelC.objects.create()
         b = ModelB.objects.create(fk=c)
         b.save()
