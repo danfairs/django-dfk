@@ -50,6 +50,9 @@ class ExistingTestCase(TestCase):
 
 class DeferredModelA(models.Model):
     user = DeferredForeignKey()
+    
+class DeferredModelB(models.Model):
+    user = DeferredForeignKey()
 
 # Point DeferredModelA's 'user' dfk to ModelA
 point(DeferredModelA, 'user', ModelA, related_name='foo_set')
@@ -82,6 +85,11 @@ class DeferredForeignKeyTestCase(TestCase):
         # Attempting to point a non-DeferredForeignKey should raise a 
         # ValueError
         self.assertRaises(ValueError, point, ModelB, 'fk', ModelC)
+        
+    def test_point_abstract(self):
+        # Attempting to point a dfk to an abstract class should raise
+        # a AssertionError
+        self.assertRaises(AssertionError, point, DeferredModelB, 'user', AbstractModel)
         
     def test_named_deferred(self):
         # Check that our repoint of the named foreign key worked
