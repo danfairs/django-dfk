@@ -48,7 +48,7 @@ class DeferredModelA(models.Model):
     user = DeferredForeignKey()
 
 # Point DeferredModelA's 'user' dfk to ModelA
-point(DeferredModelA, 'user', ModelA)
+point(DeferredModelA, 'user', ModelA, related_name='foo_set')
 
 class DeferredForeignKeyTestCase(TestCase):
 
@@ -61,6 +61,10 @@ class DeferredForeignKeyTestCase(TestCase):
         )
         x = DeferredModelA.objects.get(pk=a.pk).user
         self.assertEqual(m, x)
+        
+        # Also test that the related_name override was passed
+        # through
+        self.assertEqual(1, len(x.foo_set.all()))
 
     def test_duplicate(self):
         # Attempting to point a dfk to a different target once
