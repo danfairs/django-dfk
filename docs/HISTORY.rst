@@ -1,3 +1,7 @@
+0.0.3
+=====
+- Fix packaging error
+
 0.0.2
 =====
 
