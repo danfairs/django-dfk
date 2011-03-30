@@ -1,3 +1,10 @@
+0.0.2
+=====
+
+- Fix an issue when repointing foreign keys on model classes with custom
+  fields which use the django.db.models.SubfieldBase metaclass
+- Fix an issue migrating from Django 1.2 to 1.3.
+
 0.0.1
 =====
 
