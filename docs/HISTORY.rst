@@ -1,3 +1,8 @@
+0.0.4
+=====
+
+- Include a MANIFEST.in to ensure docs are packaged.
+
 0.0.3
 =====
 - Fix packaging error
