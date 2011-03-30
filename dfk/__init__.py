@@ -39,7 +39,9 @@ def point_named(app_name, target_name, to_model, **fk_kwargs):
     # Now look for dfk instances with the target name
     for model in models:
         for attr in dir(model):
-            ob = getattr(model, attr)
+            # Fields using models.SubfieldBase object to being got - but we
+            # can skip those anyway.
+            ob = getattr(model, attr, None)
             if not isinstance(ob, DeferredForeignKey):
                 continue
 
@@ -62,9 +64,16 @@ def repoint(from_model, rel_name, to_model, **kwargs):
     new_kwargs = {
         'related_name': rel.related_name,
         'limit_choices_to': rel.limit_choices_to,
-        'lookup_overrides': rel.lookup_overrides,
         'parent_link': rel.parent_link
     }
+
+    # Pre-1.3
+    if hasattr(rel, 'lookup_overrides'):
+        new_kwargs['lookup_overrides'] = rel.lookup_overrides
+    # 1.3
+    if hasattr(rel, 'on_delete'):
+        new_kwargs['on_delete'] = rel.on_delete
+
     new_kwargs.update(kwargs)
     new_rel = rel.__class__(*args, **new_kwargs)
     field.rel = new_rel
