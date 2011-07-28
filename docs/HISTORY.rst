@@ -1,3 +1,12 @@
+0.0.5
+=====
+
+Fix a problem where related object caches on models' _meta Options classes
+were not being repopulated on a repoint. This led to problems where
+filtering on a parent model related to a child using a deferred foreign key
+could fail if the dfk was (re)pointed after the initial phase of model loading
+had already taken place.
+
 0.0.4
 =====
 
