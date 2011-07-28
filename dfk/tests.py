@@ -114,3 +114,32 @@ class DeferredForeignKeyTestCase(TestCase):
         d = ModelCustomField.objects.create(fk=a, other='hi')
         self.assertEqual(a, ModelCustomField.objects.get(pk=d.pk).fk)
 
+    def test_options_caches_cleared_on_point(self):
+        # Check that the relevant meta caches are cleared after a point
+        # to ensure related field names are up to date.
+        class NewModel(models.Model):
+            c = DeferredForeignKey()
+
+        point(NewModel, 'c', ModelC)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        found = False
+        for rel, _ in mdc_related:
+            if rel.model is NewModel:
+                found = True
+        self.assertEqual(True, found)
+
+    def test_options_caches_cleared_on_repoint(self):
+        # Check that the relevant meta caches are cleared after a repoint
+        # to ensure related field names are up to date.
+        class NewModel2(models.Model):
+            c = DeferredForeignKey()
+
+        point(NewModel2, 'c', ModelA)
+        repoint(NewModel2, 'c', ModelC)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        found = False
+        for rel, _ in mdc_related:
+            if rel.model is NewModel2:
+                found = True
+        self.assertEqual(True, found)
+

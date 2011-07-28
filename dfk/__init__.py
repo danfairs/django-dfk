@@ -28,6 +28,9 @@ def point(from_model, rel_name, to_model, **fk_kwargs):
     )
     from_model.add_to_class(rel_name, new_foreign_key)
 
+    # Need to repopulate related name caches on both Meta classes.
+    _clean_caches(from_model, new_foreign_key.rel.to)
+
 def point_named(app_name, target_name, to_model, **fk_kwargs):
     # Grab all the models from the app
     if isinstance(app_name, basestring):
@@ -53,7 +56,6 @@ def point_named(app_name, target_name, to_model, **fk_kwargs):
             # We found a foreign key. Repoint it.
             point(model, attr, to_model, **fk_kwargs)
 
-
 def repoint(from_model, rel_name, to_model, **kwargs):
     options = getattr(to_model, '_meta', None)
     if options:
@@ -77,3 +79,12 @@ def repoint(from_model, rel_name, to_model, **kwargs):
     new_kwargs.update(kwargs)
     new_rel = rel.__class__(*args, **new_kwargs)
     field.rel = new_rel
+    _clean_caches(from_model, to_model)
+
+def _clean_caches(from_model, to_model):
+    # Repopulate related object caches when a point or repoint is done, as
+    # relationships will have changed. Without this, things like filtering
+    # on related objects is likely to fail.
+    for opts in from_model._meta, to_model._meta:
+        opts._fill_related_objects_cache()
+        opts.init_name_map()
