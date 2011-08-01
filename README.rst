@@ -18,7 +18,7 @@ on the list.
 Installation
 ============
 
-Install ``django-dfk`` using your preferred Python package manager. Use of ``virtualenv`` is 
+Install ``django-dfk`` using your preferred Python package manager. Use of ``virtualenv`` is
 also recommended::
 
     pip install django-dfk
@@ -33,24 +33,24 @@ Let's say you want to reinvent the wheel, and develop a commenting app. Your com
 might look like this, in ``mycomments.models``::
 
     from dfk import DeferredForeignKey
-    
+
     class Comment(models.Model):
         commenter = models.ForeignKey('auth.User')
         content = DeferredForeignKey()
         body = models.TextField()
-        
 
-Now, you come to integrate this application with your blog system (which, as you're keen 
+
+Now, you come to integrate this application with your blog system (which, as you're keen
 on wheel reinvention, you have also written yourself). Here's ``blog/models.py``::
 
     from dfk import point
     from mycomments.models import Comment
-    
+
     class BlogPost(models.Model):
         title = models.CharField(max_length=100)
         slug = models.SlugField()
         body = models.TextField()
-        
+
     point(Comment, 'content', BlogPost)
 
 The call to ``point`` will replace the ``DeferredForeignKey`` on ``Comment`` with a foreign key to BlogPost.
@@ -59,17 +59,17 @@ Pointing may foreign keys at once
 ---------------------------------
 
 When writing models that use deferred foreign keys, you may need to declare that a number
-should point to the same 'kind' of object. Let's say you had wild scope creep, and your 
-commenting app needed the ability to associate images with a blog post. So you edit 
+should point to the same 'kind' of object. Let's say you had wild scope creep, and your
+commenting app needed the ability to associate images with a blog post. So you edit
 your comment app's models.py so it looks like this::
 
     from dfk import DeferredForeignKey
-    
+
     class Comment(models.Model):
         commenter = models.ForeignKey('auth.User')
         content = DeferredForeignKey(name='Content')
         body = models.TextField()
-        
+
     class Image(models.Model):
         image = models.ImageField()
         content = DeferredForeignKey(name='Content')
@@ -93,6 +93,14 @@ It is also possible to pass arbitrary keyword arguments in calls to ``point`` or
 These will also be passed to the final foreign key. Where arguments are present in both the
 DFK definition and in the ``point``/``point_named`` call, arguments from the latter will take
 precedence.
+
+Model inheritance
+-----------------
+
+Model inheritance should Just Work. It's possible to have ``DeferredForeignKey``
+instances on subclasses and base classes. The only thing to be aware of is that
+repointing a dfk on a subclass where the key is actually defined on a
+non-abstract base class is illegal, and will raise a ``TypeError``.
 
 Acknowledgements
 ================

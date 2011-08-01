@@ -143,3 +143,36 @@ class DeferredForeignKeyTestCase(TestCase):
                 found = True
         self.assertEqual(True, found)
 
+    def test_derived_model(self):
+        # If we point a field on a derived model that actually is
+        # defined on the base class, then we should get a TypeError
+        class BaseClass1(models.Model):
+            c = DeferredForeignKey()
+
+        class DerivedModel1(BaseClass1):
+            pass
+        self.assertRaises(TypeError, point, DerivedModel1, 'c', ModelA)
+
+    def test_derived_model_abstract(self):
+        # If the base model is abstract, then it's actually OK as
+        # the field is local to the subclass anyway.
+        class BaseClass2(models.Model):
+            c = DeferredForeignKey()
+            class Meta:
+                abstract = True
+
+        class DerivedModel2(BaseClass2):
+            pass
+        point(DerivedModel2, 'c', ModelA)
+        self.assertEqual(ModelA, DerivedModel2.c.field.rel.to)
+
+    def test_derived_model_point_base(self):
+        # If we repoint a dfk on a base non-abstract class, subclasses
+        # should see the change.
+        class BaseClass3(models.Model):
+            c = DeferredForeignKey()
+
+        class DerivedModel3(BaseClass3):
+            pass
+        point(BaseClass3, 'c', ModelA)
+        self.assertEqual(ModelA, DerivedModel3.c.field.rel.to)

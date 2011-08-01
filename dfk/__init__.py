@@ -3,6 +3,8 @@ from django.db.models.loading import get_app
 from django.db.models.loading import get_models
 from dfk.models import DeferredForeignKey
 
+_marker = object()
+
 def point(from_model, rel_name, to_model, **fk_kwargs):
     """
     Cause the foreign key `rel_name` on `from_model` to point to
@@ -12,7 +14,17 @@ def point(from_model, rel_name, to_model, **fk_kwargs):
     assert not to_model._meta.abstract
     deferred_fk = getattr(from_model, rel_name)
     if not isinstance(deferred_fk, DeferredForeignKey):
-        raise ValueError, u'You only point a DeferredForeignKey'
+        raise ValueError(u'You only point a DeferredForeignKey')
+
+    # Need to check if this deferred fk is defined in a non-abstract
+    # base class
+    for parent in from_model._meta.parents:
+        # Abstract parent, that's OK
+        if not parent._meta.abstract and \
+            getattr(parent, rel_name, _marker) is not _marker:
+            raise TypeError(u'You may not repoint subclass '
+                            u'fields defined on a non-abstract base '
+                            u'class')
 
     target_model = '%s.%s' % (
         to_model._meta.app_label,

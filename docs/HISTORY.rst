@@ -1,3 +1,12 @@
+0.0.6
+=====
+
+Fix a problem where repointing a deferred foreign key defined on a non-abstract
+base class through a subclass would result in a new field being added to the
+local_fields of the subclass, shadowing the one on the base class. It is now
+illegal to do this; dfks on base classes should be pointed using the base class
+itself.
+
 0.0.5
 =====
 
