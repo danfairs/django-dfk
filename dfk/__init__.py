@@ -5,11 +5,13 @@ from dfk.models import DeferredForeignKey
 
 _marker = object()
 
-def point(from_model, rel_name, to_model, **fk_kwargs):
+
+def point(from_model, rel_name, to_model, clean_caches=True, **fk_kwargs):
     """
     Cause the foreign key `rel_name` on `from_model` to point to
-    `to_model`. `fk_kwargs` will be forwarded to the generated
-    foreign key.
+    `to_model`. clean_caches can be set to False if you plan to handle the
+    cleaning of object caches yourself. `fk_kwargs` will be forwarded to the
+    generated foreign key.
     """
     assert not to_model._meta.abstract
     deferred_fk = getattr(from_model, rel_name)
@@ -41,7 +43,9 @@ def point(from_model, rel_name, to_model, **fk_kwargs):
     from_model.add_to_class(rel_name, new_foreign_key)
 
     # Need to repopulate related name caches on both Meta classes.
-    _clean_caches(from_model, new_foreign_key.rel.to)
+    if clean_caches:
+        _clean_caches(from_model, new_foreign_key.rel.to)
+
 
 def point_named(app_name, target_name, to_model, **fk_kwargs):
     # Grab all the models from the app
@@ -68,7 +72,8 @@ def point_named(app_name, target_name, to_model, **fk_kwargs):
             # We found a foreign key. Repoint it.
             point(model, attr, to_model, **fk_kwargs)
 
-def repoint(from_model, rel_name, to_model, **kwargs):
+
+def repoint(from_model, rel_name, to_model, clean_caches=True, **kwargs):
     options = getattr(to_model, '_meta', None)
     if options:
         assert not options.abstract, u'Target model may not be abstract'
@@ -91,7 +96,9 @@ def repoint(from_model, rel_name, to_model, **kwargs):
     new_kwargs.update(kwargs)
     new_rel = rel.__class__(*args, **new_kwargs)
     field.rel = new_rel
-    _clean_caches(from_model, to_model)
+    if clean_caches:
+        _clean_caches(from_model, to_model)
+
 
 def _clean_caches(from_model, to_model):
     # Repopulate related object caches when a point or repoint is done, as
