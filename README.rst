@@ -110,12 +110,15 @@ Pointing or repointing foreign keys requires that related object caches are
 repopulated as relationships will have changed and things like filtering on
 related objects are likely to fail.
 
+By default object caches are cleaned after each ``point`` or ``repoint``.
 For apps with many ``DeferredForeignKey`` instances involving the same model
-it may be more efficient to clean the caches once after all pointing and
-repointing has finished rather than after every ``point`` or ``repoint``. To
-enable this pass ``clean_caches=False`` to ``point`` or ``repoint``::
+it may be more efficient to clean the caches once, after all pointing and
+repointing has finished. To enable this pass ``clean_caches=False`` to
+``point`` or ``repoint`` and then manually call ``clean_object_caches`` as
+required.
 
     from dfk import point
+    from dfk import clean_object_caches
     from mycomments.models import Comment
 
     class BlogPost(models.Model):
@@ -124,10 +127,8 @@ enable this pass ``clean_caches=False`` to ``point`` or ``repoint``::
         body = models.TextField()
 
     point(Comment, 'content', BlogPost, clean_caches=False)
+    clean_object_caches(Comment, BlogPost)
 
-    for opts in Comment._meta, BlogPost._meta:
-        opts._fill_related_objects_cache()
-        opts.init_name_map()
 
 Acknowledgements
 ================

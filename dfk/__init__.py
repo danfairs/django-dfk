@@ -44,7 +44,7 @@ def point(from_model, rel_name, to_model, clean_caches=True, **fk_kwargs):
 
     # Need to repopulate related name caches on both Meta classes.
     if clean_caches:
-        _clean_caches(from_model, new_foreign_key.rel.to)
+        clean_object_caches(from_model, new_foreign_key.rel.to)
 
 
 def point_named(app_name, target_name, to_model, **fk_kwargs):
@@ -97,13 +97,13 @@ def repoint(from_model, rel_name, to_model, clean_caches=True, **kwargs):
     new_rel = rel.__class__(*args, **new_kwargs)
     field.rel = new_rel
     if clean_caches:
-        _clean_caches(from_model, to_model)
+        clean_object_caches(from_model, to_model)
 
 
-def _clean_caches(from_model, to_model):
+def clean_object_caches(*models):
     # Repopulate related object caches when a point or repoint is done, as
     # relationships will have changed. Without this, things like filtering
     # on related objects is likely to fail.
-    for opts in from_model._meta, to_model._meta:
-        opts._fill_related_objects_cache()
-        opts.init_name_map()
+    for model in models:
+        model._meta._fill_related_objects_cache()
+        model._meta.init_name_map()

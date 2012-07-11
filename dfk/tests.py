@@ -4,6 +4,7 @@ from django.test import TestCase
 from dfk import point
 from dfk import point_named
 from dfk import repoint
+from dfk import clean_object_caches
 from dfk.models import DeferredForeignKey
 
 
@@ -152,6 +153,27 @@ class DeferredForeignKeyTestCase(TestCase):
             if rel.model is NewModelNoCache:
                 found = True
         self.assertEqual(False, found)
+
+    def test_options_caches_cleaned(self):
+        # Check that the relevant meta caches are cleared after
+        # a direct call to clean_object_caches
+        class NewModelNoCache2(models.Model):
+            c = DeferredForeignKey()
+
+        point(NewModelNoCache2, 'c', ModelC, clean_caches=False)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        found = False
+        for rel, _ in mdc_related:
+            if rel.model is NewModelNoCache2:
+                found = True
+        assert not found
+
+        clean_object_caches(NewModelNoCache2, ModelC)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        for rel, _ in mdc_related:
+            if rel.model is NewModelNoCache2:
+                found = True
+        self.assertEqual(True, found)
 
     def test_options_caches_cleared_on_repoint(self):
         # Check that the relevant meta caches are cleared after a repoint
