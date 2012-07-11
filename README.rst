@@ -115,7 +115,7 @@ For apps with many ``DeferredForeignKey`` instances involving the same model
 it may be more efficient to clean the caches once, after all pointing and
 repointing has finished. To enable this pass ``clean_caches=False`` to
 ``point`` or ``repoint`` and then manually call ``clean_object_caches`` as
-required.
+required::
 
     from dfk import point
     from dfk import clean_object_caches
