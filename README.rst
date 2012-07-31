@@ -55,8 +55,8 @@ on wheel reinvention, you have also written yourself). Here's ``blog/models.py``
 
 The call to ``point`` will replace the ``DeferredForeignKey`` on ``Comment`` with a foreign key to BlogPost.
 
-Pointing may foreign keys at once
----------------------------------
+Pointing many foreign keys at once
+----------------------------------
 
 When writing models that use deferred foreign keys, you may need to declare that a number
 should point to the same 'kind' of object. Let's say you had wild scope creep, and your
@@ -83,6 +83,7 @@ accomplished with the ``point_named`` function::
 Now, all ``DeferredForeignKey`` instances in the ``blog`` app which are called ``Content`` will
 be replaced by real foreign keys to ``BlogPost``.
 
+
 Arguments to the generated foreign keys
 ---------------------------------------
 
@@ -101,6 +102,33 @@ Model inheritance should Just Work. It's possible to have ``DeferredForeignKey``
 instances on subclasses and base classes. The only thing to be aware of is that
 repointing a dfk on a subclass where the key is actually defined on a
 non-abstract base class is illegal, and will raise a ``TypeError``.
+
+Cleaning object caches
+----------------------
+
+Pointing or repointing foreign keys requires that related object caches are
+repopulated as relationships will have changed and things like filtering on
+related objects are likely to fail.
+
+By default object caches are cleaned after each ``point`` or ``repoint``.
+For apps with many ``DeferredForeignKey`` instances involving the same model
+it may be more efficient to clean the caches once, after all pointing and
+repointing has finished. To enable this pass ``clean_caches=False`` to
+``point`` or ``repoint`` and then manually call ``clean_object_caches`` as
+required::
+
+    from dfk import point
+    from dfk import clean_object_caches
+    from mycomments.models import Comment
+
+    class BlogPost(models.Model):
+        title = models.CharField(max_length=100)
+        slug = models.SlugField()
+        body = models.TextField()
+
+    point(Comment, 'content', BlogPost, clean_caches=False)
+    clean_object_caches(Comment, BlogPost)
+
 
 Acknowledgements
 ================

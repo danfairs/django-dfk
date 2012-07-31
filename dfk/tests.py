@@ -4,29 +4,38 @@ from django.test import TestCase
 from dfk import point
 from dfk import point_named
 from dfk import repoint
+from dfk import clean_object_caches
 from dfk.models import DeferredForeignKey
+
 
 class CustomField(models.CharField):
     __metaclass__ = models.SubfieldBase
 
+
 class ModelA(models.Model):
     pass
+
 
 class ModelB(models.Model):
     fk = models.ForeignKey(ModelA)
 
+
 class ModelC(models.Model):
     pass
 
+
 class ModelD(models.Model):
     fk = DeferredForeignKey(name='content')
+
 
 class ModelCustomField(models.Model):
     fk = DeferredForeignKey(name='content2')
     other = CustomField(max_length=10)
 
+
 class NotAModel(object):
     pass
+
 
 class AbstractModel(models.Model):
     class Meta:
@@ -34,6 +43,7 @@ class AbstractModel(models.Model):
 
 # Repoint ModelB's foreign key field 'fk' to ModelC
 repoint(ModelB, 'fk', ModelC)
+
 
 class ExistingTestCase(TestCase):
 
@@ -45,7 +55,6 @@ class ExistingTestCase(TestCase):
         b = ModelB.objects.create(fk=c)
         b.save()
 
-        x = ModelB.objects.get(pk=b.pk)
         self.assertEqual(c, b.fk)
 
     def test_not_a_model(self):
@@ -58,6 +67,7 @@ class ExistingTestCase(TestCase):
 class DeferredModelA(models.Model):
     user = DeferredForeignKey()
 
+
 class DeferredModelB(models.Model):
     user = DeferredForeignKey()
 
@@ -69,6 +79,7 @@ point_named('dfk', 'content', ModelA)
 
 # Point ModelCustomFiekld's deferred fk to ModelA
 point_named('dfk', 'content2', ModelA)
+
 
 class DeferredForeignKeyTestCase(TestCase):
 
@@ -99,7 +110,8 @@ class DeferredForeignKeyTestCase(TestCase):
     def test_point_abstract(self):
         # Attempting to point a dfk to an abstract class should raise
         # a AssertionError
-        self.assertRaises(AssertionError, point, DeferredModelB, 'user', AbstractModel)
+        self.assertRaises(AssertionError, point, DeferredModelB, 'user',
+            AbstractModel)
 
     def test_named_deferred(self):
         # Check that our repoint of the named foreign key worked
@@ -128,6 +140,41 @@ class DeferredForeignKeyTestCase(TestCase):
                 found = True
         self.assertEqual(True, found)
 
+    def test_options_caches_not_cleared_on_point(self):
+        # Check that the relevant meta caches are not cleared after a point
+        # if clear_caches=False
+        class NewModelNoCache(models.Model):
+            c = DeferredForeignKey()
+
+        point(NewModelNoCache, 'c', ModelC, clean_caches=False)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        found = False
+        for rel, _ in mdc_related:
+            if rel.model is NewModelNoCache:
+                found = True
+        self.assertEqual(False, found)
+
+    def test_options_caches_cleaned(self):
+        # Check that the relevant meta caches are cleared after
+        # a direct call to clean_object_caches
+        class NewModelNoCache2(models.Model):
+            c = DeferredForeignKey()
+
+        point(NewModelNoCache2, 'c', ModelC, clean_caches=False)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        found = False
+        for rel, _ in mdc_related:
+            if rel.model is NewModelNoCache2:
+                found = True
+        assert not found
+
+        clean_object_caches(NewModelNoCache2, ModelC)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        for rel, _ in mdc_related:
+            if rel.model is NewModelNoCache2:
+                found = True
+        self.assertEqual(True, found)
+
     def test_options_caches_cleared_on_repoint(self):
         # Check that the relevant meta caches are cleared after a repoint
         # to ensure related field names are up to date.
@@ -142,6 +189,21 @@ class DeferredForeignKeyTestCase(TestCase):
             if rel.model is NewModel2:
                 found = True
         self.assertEqual(True, found)
+
+    def test_options_caches_not_cleared_on_repoint(self):
+        # Check that the relevant meta caches are not cleared after a repoint
+        # if clear_caches=False
+        class NewModel2NoCache(models.Model):
+            c = DeferredForeignKey()
+
+        point(NewModel2NoCache, 'c', ModelA)
+        repoint(NewModel2NoCache, 'c', ModelC, clean_caches=False)
+        mdc_related = ModelC._meta.get_all_related_objects_with_model()
+        found = False
+        for rel, _ in mdc_related:
+            if rel.model is NewModel2NoCache:
+                found = True
+        self.assertEqual(False, found)
 
     def test_derived_model(self):
         # If we point a field on a derived model that actually is
@@ -158,6 +220,7 @@ class DeferredForeignKeyTestCase(TestCase):
         # the field is local to the subclass anyway.
         class BaseClass2(models.Model):
             c = DeferredForeignKey()
+
             class Meta:
                 abstract = True
 
