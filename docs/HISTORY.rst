@@ -1,3 +1,9 @@
+0.0.7
+=====
+
+Make cache cleaning optional, and fix some PEP8 compliance issues. Thanks
+to Mark Hughes (mark@ismgames.com).
+
 0.0.6
 =====
 
