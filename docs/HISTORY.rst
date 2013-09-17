@@ -1,3 +1,10 @@
+0.0.8
+=====
+Make codebase Python 3 compatible (robcharlwood@gmail.com).
+Make codebase compatible with django 1.5.4
+New Python 3 compatible codebase has been tested against django 1.5.4 (robcharlwood@gmail.com)
+Carried out full tidy up with PEP8 compliance. (robcharlwood@gmail.com)
+
 0.0.7
 =====
 

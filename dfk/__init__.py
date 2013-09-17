@@ -5,6 +5,12 @@ from dfk.models import DeferredForeignKey
 
 _marker = object()
 
+try:
+    unicode = unicode
+except NameError:
+    unicode = str
+    basestring = (str, bytes)
+
 
 def point(from_model, rel_name, to_model, clean_caches=True, **fk_kwargs):
     """
@@ -23,7 +29,7 @@ def point(from_model, rel_name, to_model, clean_caches=True, **fk_kwargs):
     for parent in from_model._meta.parents:
         # Abstract parent, that's OK
         if not parent._meta.abstract and \
-            getattr(parent, rel_name, _marker) is not _marker:
+                getattr(parent, rel_name, _marker) is not _marker:
             raise TypeError(u'You may not repoint subclass '
                             u'fields defined on a non-abstract base '
                             u'class')
