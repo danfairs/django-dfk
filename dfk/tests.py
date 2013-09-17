@@ -110,8 +110,8 @@ class DeferredForeignKeyTestCase(TestCase):
     def test_point_abstract(self):
         # Attempting to point a dfk to an abstract class should raise
         # a AssertionError
-        self.assertRaises(AssertionError, point, DeferredModelB, 'user',
-            AbstractModel)
+        self.assertRaises(
+            AssertionError, point, DeferredModelB, 'user', AbstractModel)
 
     def test_named_deferred(self):
         # Check that our repoint of the named foreign key worked

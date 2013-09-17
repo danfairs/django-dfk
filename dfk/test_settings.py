@@ -5,8 +5,8 @@ TEMPLATE_DEBUG = DEBUG
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'dfk.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'dfk.db',
     }
 }
 
@@ -15,3 +15,5 @@ ROOT_URLCONF = 'test_urls'
 INSTALLED_APPS = (
     'dfk',
 )
+
+SECRET_KEY = '0af=nmwyehxzkzwmkd_zu$gq!+786d4g3-t3!ggtuc=$7lisey'
