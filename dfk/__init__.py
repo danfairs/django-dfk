@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 from django.db.models import ForeignKey
 from django.db.models.loading import get_app
 from django.db.models.loading import get_models
@@ -22,7 +23,7 @@ def point(from_model, rel_name, to_model, clean_caches=True, **fk_kwargs):
     assert not to_model._meta.abstract
     deferred_fk = getattr(from_model, rel_name)
     if not isinstance(deferred_fk, DeferredForeignKey):
-        raise ValueError(u'You only point a DeferredForeignKey')
+        raise ValueError('You only point a DeferredForeignKey')
 
     # Need to check if this deferred fk is defined in a non-abstract
     # base class
@@ -30,9 +31,9 @@ def point(from_model, rel_name, to_model, clean_caches=True, **fk_kwargs):
         # Abstract parent, that's OK
         if not parent._meta.abstract and \
                 getattr(parent, rel_name, _marker) is not _marker:
-            raise TypeError(u'You may not repoint subclass '
-                            u'fields defined on a non-abstract base '
-                            u'class')
+            raise TypeError('You may not repoint subclass '
+                            'fields defined on a non-abstract base '
+                            'class')
 
     target_model = '%s.%s' % (
         to_model._meta.app_label,
@@ -82,7 +83,7 @@ def point_named(app_name, target_name, to_model, **fk_kwargs):
 def repoint(from_model, rel_name, to_model, clean_caches=True, **kwargs):
     options = getattr(to_model, '_meta', None)
     if options:
-        assert not options.abstract, u'Target model may not be abstract'
+        assert not options.abstract, 'Target model may not be abstract'
     field = from_model._meta.get_field(rel_name)
     rel = field.rel
     args = (to_model, rel.field_name)
