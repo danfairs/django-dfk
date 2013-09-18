@@ -44,7 +44,7 @@ Once all your versions of Python are installed and available, you can run the te
 
     tox
 
-The first build through will be quite slow whilst it builds each of the ``virtualenv``s agaisnt each version of Python along with the specified version of django and runs the tests. Subsequent runs should be much quicker as ``tox`` leaves the ``virtualenv``'s in place by default in a folder named ``.tox``
+The first build through will be quite slow whilst it builds each ``virtualenv`` agaisnt each version of Python along with the specified version of django and runs the tests. Subsequent runs should be much quicker as ``tox`` leaves the ``virtualenv`` in place by default in a folder named ``.tox``
 
 Run tests quickly
 =================
