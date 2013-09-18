@@ -4,6 +4,8 @@
 - Make codebase compatible with django 1.5.4 (robcharlwood@gmail.com)
 - New Python 3 compatible codebase has been tested against django 1.5.4 (robcharlwood@gmail.com)
 - Carried out full tidy up with PEP8 compliance. (robcharlwood@gmail.com)
+- Setup and configured ``django-dfk`` for use with ``tox`` testing library (robcharlwood@gmail.com)
+- Added full documentation on running test suite (robcharlwood@gmail.com)
 
 0.0.7
 =====
