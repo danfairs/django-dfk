@@ -15,7 +15,8 @@ You should perform the latter with caution - consider it a similar process to mo
 This package is alpha software, and is not feature-complete. See the TODO section for what's
 on the list.
 
-django-dfk is compatiable with Python 2.6, 2.7, 3.2 and 3.3
+django-dfk is compatible with Python 2.6, 2.7, 3.2 and 3.3.
+django-dfk is compatible with django versions 1.3 - 1.5
 
 Installation
 ============
@@ -136,3 +137,4 @@ Acknowledgements
 ================
 
 Thanks to ISM Fantasy Games Ltd. for sponsoring this package.
+Package maintained by Dan Fairs and Rob Charlwood
