@@ -86,7 +86,13 @@ def repoint(from_model, rel_name, to_model, clean_caches=True, **kwargs):
         assert not options.abstract, 'Target model may not be abstract'
     field = from_model._meta.get_field(rel_name)
     rel = field.rel
-    args = (to_model, rel.field_name)
+
+    # Does our relationship class quack like a Django 1.6+ ForeignObject
+    if hasattr(rel.__class__, 'get_joining_columns'):
+        args = (field, to_model, rel.field_name)
+    else:
+        args = (to_model, rel.field_name)
+
     new_kwargs = {
         'related_name': rel.related_name,
         'limit_choices_to': rel.limit_choices_to,
