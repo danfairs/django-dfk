@@ -137,4 +137,4 @@ Acknowledgements
 ================
 
 Thanks to ISM Fantasy Games Ltd. for sponsoring this package.
-Package maintained by Dan Fairs and Rob Charlwood
+Package maintained by Dan Fairs, Rob Charlwood and Ian Dash
