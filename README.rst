@@ -16,7 +16,7 @@ This package is alpha software, and is not feature-complete. See the TODO sectio
 on the list.
 
 django-dfk is compatible with Python 2.6, 2.7, 3.2 and 3.3.
-django-dfk is compatible with django versions 1.3 - 1.5
+django-dfk is compatible with django versions 1.3 - 1.6
 
 Installation
 ============

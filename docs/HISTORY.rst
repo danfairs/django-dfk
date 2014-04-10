@@ -1,8 +1,7 @@
 0.0.9
 =====
 - Setup Tox environments for Django 1.6
-- Fixed repoint issues under Django 1.6 due to use of new ForeignObject baseclass
-  for related objects in Django.  
+- Fixed repoint issues under Django 1.6 due to use of new ForeignObject baseclass for related objects.  
 
 
 0.0.8
