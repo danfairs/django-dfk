@@ -1,3 +1,10 @@
+0.0.9
+=====
+- Setup Tox environments for Django 1.6
+- Fixed repoint issues under Django 1.6 due to use of new ForeignObject baseclass
+  for related objects in Django.  
+
+
 0.0.8
 =====
 - Make codebase Python 3 compatible (3.2, 3.3) (robcharlwood@gmail.com).
