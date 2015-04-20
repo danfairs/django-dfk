@@ -16,4 +16,6 @@ INSTALLED_APPS = (
     'dfk',
 )
 
+MIDDLEWARE_CLASSES = []
+
 SECRET_KEY = '0af=nmwyehxzkzwmkd_zu$gq!+786d4g3-t3!ggtuc=$7lisey'
