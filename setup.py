@@ -14,6 +14,9 @@ setup(
     license='BSD',
     packages=find_packages(exclude=['ez_setup']),
     zip_safe=False,
+    install_requires=[
+        'django>=1.3,<1.8'
+    ],
     classifiers=[
         "Programming Language :: Python",
         'Programming Language :: Python :: 2',

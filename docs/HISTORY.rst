@@ -1,3 +1,12 @@
+0.0.10
+=====
+- Setup Tox environments for Django 1.7
+- Added MIDDLEWARE_CLASSES definition to test settings to avoid warnings from
+  Django 1.7's system check.
+- Added install_requires limits to setup.py to reflect supported versions of
+  Django
+_ Updated docs.
+
 0.0.9
 =====
 - Setup Tox environments for Django 1.6
