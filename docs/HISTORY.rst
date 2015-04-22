@@ -5,7 +5,7 @@
   Django 1.7's system check.
 - Added install_requires limits to setup.py to reflect supported versions of
   Django
-_ Updated docs.
+- Updated docs.
 
 0.0.9
 =====
